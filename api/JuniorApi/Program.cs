@@ -1,26 +1,47 @@
+using JuniorApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1)permite usar "Controllers" (clases que reciben requests)
-builder.Services.AddControllers();
-
-// 2)habilita que Swagger pueda "descubrir" tus endpoints
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
-
-// 3)habilita Swagger (la página /swagger)
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4)swagger solo se muestra en Development
+// Swagger UI
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();      //genera el JSON de swagger
-    app.UseSwaggerUI();    //muestra la página web de swagger
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+// "Base de datos" en memoria (se reinicia si parás la API)
+var tasks = new List<TaskItem>
+{
+    new TaskItem { Id = 1, Title = "Aprender Vue", IsDone = false },
+    new TaskItem { Id = 2, Title = "Aprender .NET", IsDone = false }
+};
 
-// 5)conecta tus controllers con las rutas (ej: /api/...)
-app.MapControllers();
+// GET /api/tasks -> devuelve la lista
+app.MapGet("/api/tasks", () =>
+{
+    return tasks;
+});
+
+// POST /api/tasks -> agrega una tarea nueva
+app.MapPost("/api/tasks", (TaskItem input) =>
+{
+    var newId = tasks.Count == 0 ? 1 : tasks.Max(t => t.Id) + 1;
+
+    var task = new TaskItem
+    {
+        Id = newId,
+        Title = input.Title,
+        IsDone = false
+    };
+
+    tasks.Add(task);
+    return task;
+});
 
 app.Run();
