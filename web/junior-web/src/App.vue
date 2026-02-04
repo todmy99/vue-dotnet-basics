@@ -1,20 +1,20 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-// --- Contador (local) ---
+//contador (local)
 const count = ref(0);
 function increment() {
   count.value++;
 }
 
-// --- Tareas (desde la API .NET) ---
+//tareas (desde la API .NET)
 const apiBase = "http://localhost:5055";
 
 const tasks = ref([]);
 const title = ref("");
 const error = ref("");
 
-// --- Edición ---
+//edición
 const editingId = ref(null);
 const editTitle = ref("");
 
@@ -67,7 +67,7 @@ async function deleteTask(id) {
   }
 }
 
-// --- Editar título ---
+//editar título
 function startEdit(task) {
   editingId.value = task.id;
   editTitle.value = task.title;
@@ -104,7 +104,7 @@ onMounted(loadTasks);
   <main style="max-width: 720px; margin: 40px auto; font-family: system-ui;">
     <h1>Vue + .NET Basics</h1>
 
-    <!-- Contador local -->
+    <!--contador local-->
     <section style="display:flex; gap: 12px; align-items:center; margin: 16px 0;">
       <button @click="increment" style="padding: 8px 12px;">Incrementar</button>
       <p>Contador: <b>{{ count }}</b></p>
@@ -112,7 +112,7 @@ onMounted(loadTasks);
 
     <hr />
 
-    <!-- Tareas desde .NET -->
+    <!--tareas desde .NET-->
     <section style="margin-top: 16px;">
       <h2>Tareas (desde .NET)</h2>
 
@@ -138,7 +138,7 @@ onMounted(loadTasks);
         >
           <input type="checkbox" :checked="t.isDone" @change="toggleTask(t.id)" />
 
-          <!-- Vista normal -->
+          <!--vista normal-->
           <span
             v-if="editingId !== t.id"
             :style="{ textDecoration: t.isDone ? 'line-through' : 'none' }"
@@ -146,7 +146,7 @@ onMounted(loadTasks);
             #{{ t.id }} - {{ t.title }}
           </span>
 
-          <!-- Modo edición -->
+          <!--modo edición-->
           <input
             v-else
             v-model="editTitle"
@@ -154,7 +154,7 @@ onMounted(loadTasks);
             @keyup.enter="saveEdit(t.id)"
           />
 
-          <!-- Botones -->
+          <!--botones-->
           <button
             v-if="editingId !== t.id"
             @click="startEdit(t)"
