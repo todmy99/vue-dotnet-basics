@@ -1,0 +1,6 @@
+@JuniorApi_HostAddress = http://localhost:5055
+
+GET {{JuniorApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
