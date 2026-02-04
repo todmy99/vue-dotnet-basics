@@ -75,4 +75,18 @@ app.MapDelete("/api/tasks/{id}", (int id) =>
     return Results.NoContent(); // 204 (borrado OK sin devolver nada)
 });
 
+// PUT /api/tasks/{id}  -> actualiza el título
+app.MapPut("/api/tasks/{id}", (int id, TaskItem input) =>
+{
+    var task = tasks.FirstOrDefault(t => t.Id == id);
+    if (task is null) return Results.NotFound();
+
+    var newTitle = input.Title?.Trim();
+    if (string.IsNullOrWhiteSpace(newTitle))
+        return Results.BadRequest("Title is required");
+
+    task.Title = newTitle;
+    return Results.Ok(task);
+});
+
 app.Run();
