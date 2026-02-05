@@ -1,4 +1,6 @@
 using JuniorApi.Models;
+using System.Text.Json;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,12 +29,24 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 
-//"base de datos" en memoria
-var tasks = new List<TaskItem>
+var filePath = Path.Combine(app.Environment.ContentRootPath, "tasks.json");
+
+List<TaskItem> LoadTasks()
 {
-    new TaskItem { Id = 1, Title = "Aprender Vue", IsDone = false },
-    new TaskItem { Id = 2, Title = "Aprender .NET", IsDone = false }
-};
+    if (!File.Exists(filePath)) return new List<TaskItem>();
+
+    var json = File.ReadAllText(filePath);
+    return JsonSerializer.Deserialize<List<TaskItem>>(json) ?? new List<TaskItem>();
+}
+
+void SaveTasks(List<TaskItem> list)
+{
+    var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+    File.WriteAllText(filePath, json);
+}
+
+var tasks = LoadTasks();
+
 
 //GET /api/tasks
 app.MapGet("/api/tasks", () => tasks);
@@ -50,6 +64,7 @@ app.MapPost("/api/tasks", (TaskItem input) =>
     };
 
     tasks.Add(task);
+    SaveTasks(tasks);
     return task;
 });
 
@@ -60,6 +75,7 @@ app.MapPut("/api/tasks/{id}/toggle", (int id) =>
     if (task is null) return Results.NotFound();
 
     task.IsDone = !task.IsDone;
+    SaveTasks(tasks);
     return Results.Ok(task);
 });
 
@@ -70,6 +86,7 @@ app.MapDelete("/api/tasks/{id}", (int id) =>
     if (task is null) return Results.NotFound();
 
     tasks.Remove(task);
+    SaveTasks(tasks);
     return Results.NoContent(); // 204 (borrado OK sin devolver nada)
 });
 
@@ -84,6 +101,7 @@ app.MapPut("/api/tasks/{id}", (int id, TaskItem input) =>
         return Results.BadRequest("Title is required");
 
     task.Title = newTitle;
+    SaveTasks(tasks);
     return Results.Ok(task);
 });
 
