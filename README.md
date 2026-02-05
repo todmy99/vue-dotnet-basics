@@ -1,10 +1,10 @@
-**Vue + .NET Basics (Mini proyecto)**
+# **Vue + .NET Basics (Mini proyecto)** :rocket:
 
 Descripción
 - Frontend en Vue 3
 - Backend en .NET (Minimal API)
 - CRUD de tareas: listar, crear, editar, marcar como hecha y borrar
-- Persistencia simple: se guarda en un archivo tasks.json (para no usar SQL por ahora)
+- Persistencia simple: se guarda en un archivo tasks.json
 
 Requisitos
 - Node.js + npm
